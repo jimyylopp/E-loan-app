@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Profile - E-Loan</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
+    <div class="flex items-center gap-3">
+      <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="h-10 w-10" />
+      <h1 class="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <i class="fas fa-user-circle"></i> Profile Page
+      </h1>
+    </div>
+    <div class="flex gap-4 items-center" id="navLinks">
+      <!-- Will be populated dynamically based on user role -->
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6 max-w-5xl mx-auto">
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-2xl font-semibold mb-4 border-b pb-2 flex items-center gap-2">
+        <i class="fas fa-id-badge text-purple-600"></i> Your Information
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-3">
+          <label class="block">
+            <span class="text-gray-600">Full Name</span>
+            <input type="text" id="fullName" class="w-full p-2 border rounded" placeholder="Your name" />
+          </label>
+          <label class="block">
+            <span class="text-gray-600">Email</span>
+            <input type="email" id="userEmail" class="w-full p-2 border rounded bg-gray-100" disabled />
+          </label>
+          <label class="block">
+            <span class="text-gray-600">UID</span>
+            <input type="text" id="userUid" class="w-full p-2 border rounded bg-gray-100" disabled />
+          </label>
+          <label class="block">
+            <span class="text-gray-600">Registered</span>
+            <input type="text" id="userCreated" class="w-full p-2 border rounded bg-gray-100" disabled />
+          </label>
+        </div>
+
+        <div class="space-y-3">
+          <label class="block">
+            <span class="text-gray-600">Credit Points</span>
+            <input type="text" id="creditPoints" class="w-full p-2 border rounded bg-gray-100" disabled />
+          </label>
+          <label class="block">
+            <span class="text-gray-600">Account Status</span>
+            <input type="text" value="Active" class="w-full p-2 border rounded bg-green-50 text-green-700 font-medium" disabled />
+          </label>
+          <label class="block">
+            <span class="text-gray-600">Change Password</span>
+            <button id="resetPasswordBtn" class="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+              Send Reset Email
+            </button>
+          </label>
+          <div class="flex justify-end mt-4">
+            <button id="saveProfile" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order History -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-semibold border-b pb-2 flex items-center gap-2">
+          <i class="fas fa-box text-teal-600"></i> Order History
+        </h2>
+        <div class="flex gap-2">
+          <button id="exportBtn" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-black">
+            <i class="fas fa-file-export"></i> Export TXT
+          </button>
+        </div>
+      </div>
+      <ul id="orderHistory" class="divide-y divide-gray-200 text-sm bg-white p-4 rounded shadow"></ul>
+    </div>
+  </main>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+      sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      updateDoc,
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const navLinks = document.getElementById("navLinks");
+    const userEmail = document.getElementById("userEmail");
+    const userUid = document.getElementById("userUid");
+    const userCreated = document.getElementById("userCreated");
+    const creditPoints = document.getElementById("creditPoints");
+    const fullNameInput = document.getElementById("fullName");
+    const orderList = document.getElementById("orderHistory");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
+
+      const userRef = doc(db, "Users", user.uid);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.exists() ? userSnap.data() : {};
+
+      navLinks.innerHTML = `
+        <a href="dashboard.html" class="text-sm text-blue-600 hover:underline">Dashboard</a>
+        <a href="credit.html" class="text-sm text-blue-600 hover:underline">Credit</a>
+        ${userData.role !== 'admin' ? '<a href="profile.html" class="text-sm text-blue-600 hover:underline">Profile</a>' : ''}
+        <button id="logoutBtn" class="bg-red-500 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-red-600">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>`;
+
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+      });
+
+      userEmail.value = user.email;
+      userUid.value = user.uid;
+      userCreated.value = user.metadata.creationTime;
+      creditPoints.value = `${userData.points || 0} points`;
+      fullNameInput.value = userData.fullName || "";
+
+      const q = query(collection(db, "orders"), where("userId", "==", user.uid));
+      const querySnap = await getDocs(q);
+      const allOrders = [];
+
+      querySnap.forEach(docSnap => {
+        const order = docSnap.data();
+        const li = document.createElement("li");
+        li.className = "py-2";
+        li.innerHTML = `<strong>${order.fullName}</strong> ordered <em>${order.items.length}</em> items - Total: <span class="text-green-600 font-medium">$${order.total.toFixed(2)}</span><br><span class="text-xs text-gray-500">${new Date(order.createdAt?.seconds * 1000).toLocaleString()}</span>`;
+        orderList.appendChild(li);
+        allOrders.push(order);
+      });
+
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        const content = allOrders.map(o => `${o.fullName} - ${o.items.length} items - $${o.total.toFixed(2)} on ${new Date(o.createdAt?.seconds * 1000).toLocaleString()}`).join("\n");
+        const blob = new Blob([content], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "order-history.txt";
+        link.click();
+      });
+
+      document.getElementById("exportPdf").addEventListener("click", () => {
+        const element = document.createElement("div");
+        element.innerHTML = allOrders.map(o => `<p><strong>${o.fullName}</strong> - ${o.items.length} items - $${o.total.toFixed(2)}<br><small>${new Date(o.createdAt?.seconds * 1000).toLocaleString()}</small></p>`).join("<hr>");
+        html2pdf().from(element).set({ margin: 0.5, filename: "order-history.pdf", html2canvas: { scale: 2 }, jsPDF: { unit: "in", format: "letter", orientation: "portrait" }}).save();
+      });
+    });
+
+    document.getElementById("saveProfile").addEventListener("click", async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      const name = fullNameInput.value.trim();
+      const userRef = doc(db, "Users", user.uid);
+      await updateDoc(userRef, { fullName: name });
+      alert("✅ Profile updated!");
+    });
+
+    document.getElementById("resetPasswordBtn").addEventListener("click", async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      await sendPasswordResetEmail(auth, user.email);
+      alert("📩 Password reset email sent!");
+    });
+  </script>
+</body>
+</html>

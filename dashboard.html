@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>E-Loan Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <style>
+    .logout-btn {
+      background-image: linear-gradient(to right, #ef4444, #dc2626);
+      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3), 0 2px 4px -1px rgba(239, 68, 68, 0.1);
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-image: linear-gradient(to right, #dc2626, #b91c1c);
+      box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.1);
+      transform: translateY(-1px);
+    }
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+    .logo-img {
+      height: 40px;
+      width: 40px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+ <!-- Navbar with Logo -->
+<nav class="bg-white shadow-lg p-4 flex justify-between items-center">
+  <div class="flex items-center gap-3">
+    <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="logo-img" />
+    <h1 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
+      E-Loan Dashboard
+    </h1>
+  </div>
+  
+<!-- Profile Dropdown (Click-based) -->
+<div class="relative" id="profileDropdown">
+  <button id="dropdownToggle" class="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-2xl focus:outline-none">
+    <i class="fas fa-user-circle"></i>
+    <i class="fas fa-caret-down text-sm"></i>
+  </button>
+  <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg hidden z-50">
+    <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i class="fas fa-id-badge mr-2 text-blue-500"></i> View Profile
+    </a>
+    <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+      <i class="fas fa-sign-out-alt mr-2"></i> Logout
+    </button>
+  </div>
+</div>
+
+</nav>
+
+
+  <!-- Content -->
+  <main class="p-6 max-w-6xl mx-auto">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-gray-800">Welcome to your E-Loan Dashboard</h2>
+      <p class="text-gray-600 mt-2">Manage your shopping, financing, and track your credit growth.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <a href="marketplace.html" class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition transform hover:scale-105">
+        <div class="flex items-center gap-4">
+          <div class="bg-blue-100 text-blue-600 p-4 rounded-full">
+            <i class="fas fa-store text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">Suuq Marketplace</h3>
+            <p class="text-gray-600 text-sm">Explore electronics, pharmacy & cosmetics</p>
+          </div>
+        </div>
+      </a>
+
+      <a href="credit.html" class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition transform hover:scale-105">
+        <div class="flex items-center gap-4">
+          <div class="bg-green-100 text-green-600 p-4 rounded-full">
+            <i class="fas fa-credit-card text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">Credit Dashboard</h3>
+            <p class="text-gray-600 text-sm">View your points, eligibility & payment status</p>
+          </div>
+        </div>
+      </a>
+
+      <div class="bg-white p-6 rounded-xl shadow-md opacity-50 cursor-not-allowed">
+        <div class="flex items-center gap-4">
+          <div class="bg-yellow-100 text-yellow-600 p-4 rounded-full">
+            <i class="fas fa-coins text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">My Installments</h3>
+            <p class="text-gray-600 text-sm">Coming soon: Manage your active payments</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advertisement Section -->
+    <section class="mt-4">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Top Picks for You</h3>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=800&q=80" alt="Smartphones" class="h-48 w-full object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold">Latest Smartphones</h4>
+            <p class="text-gray-600 text-sm">Premium devices with flexible payment options</p>
+            <div class="mt-2 text-blue-600 text-sm font-medium">0% interest available</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=800&q=80" alt="Laptops" class="h-48 w-full object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold">High-end Laptops</h4>
+            <p class="text-gray-600 text-sm">Powerful machines for work and creativity</p>
+            <div class="mt-2 text-blue-600 text-sm font-medium">12-month installment plan</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80" alt="Cosmetics" class="h-48 w-full object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold">Premium Cosmetics</h4>
+            <p class="text-gray-600 text-sm">Luxury skincare and makeup collections</p>
+            <div class="mt-2 text-blue-600 text-sm font-medium">Buy now, pay later</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80" alt="Supplements" class="h-48 w-full object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold">Health Essentials</h4>
+            <p class="text-gray-600 text-sm">Vitamins, supplements, and pharmacy items</p>
+            <div class="mt-2 text-blue-600 text-sm font-medium">Flexible payment terms</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Firebase Auth + Logout -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.href = "login.html";
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
+  </script>
+<!--
+<style>
+  /* Add this to fix the profile dropdown hover */
+  .group:hover .group-hover\:block {
+    display: block;
+  }
+</style>
+-->
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("dropdownToggle");
+    const dropdown = document.getElementById("dropdownMenu");
+
+    toggleBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); // prevent from closing immediately
+      dropdown.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", () => {
+      dropdown.classList.add("hidden");
+    });
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+        const auth = getAuth();
+        await signOut(auth);
+        window.location.href = "login.html";
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

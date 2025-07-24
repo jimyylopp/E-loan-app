@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reset Password - E-Loan</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+
+  <style>
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+    .card:hover {
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+    .reset-btn {
+      background-image: linear-gradient(to right, #3b82f6, #2563eb);
+    }
+    .reset-btn:hover {
+      background-image: linear-gradient(to right, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+    .input-field {
+      border: 1px solid #e5e7eb;
+    }
+    .input-field:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center min-h-screen p-4">
+
+  <div class="card p-8 w-full max-w-md">
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-4">
+        <div class="rounded-full bg-white shadow p-4">
+          <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="h-16 w-16 object-contain" />
+        </div>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800">Reset Your Password</h2>
+      <p class="text-gray-600 mt-2">Enter your email to receive a reset link</p>
+    </div>
+
+    <form id="resetForm" class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-envelope text-gray-400"></i>
+          </div>
+          <input type="email" id="email" class="input-field w-full pl-10 pr-3 py-3 rounded-lg" placeholder="you@example.com" required />
+        </div>
+      </div>
+
+      <button type="submit" class="reset-btn w-full text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2">
+        <i class="fas fa-paper-plane"></i>
+        <span>Send Reset Link</span>
+      </button>
+
+      <div class="mt-8 text-center text-sm text-gray-500">
+        <p>Remembered your password Back to 
+          <a href="login.html" class="text-blue-600 hover:underline">Login</a>
+        </p>
+      </div>
+    </form>
+
+    <p id="resetMessage" class="text-center mt-6 text-sm"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth,
+      sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("resetForm");
+    const message = document.getElementById("resetMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        message.textContent = "✅ Reset link sent to your email.";
+        message.className = "text-center mt-6 text-green-600 font-medium";
+      } catch (err) {
+        message.textContent = "❌ " + err.message;
+        message.className = "text-center mt-6 text-red-600 font-medium";
+      }
+    });
+  </script>
+</body>
+</html>

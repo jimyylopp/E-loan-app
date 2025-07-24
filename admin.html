@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - E-Loan</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="icon" type="image/png" href="assets/favicon.png">
+
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Navbar -->
+<nav class="bg-white shadow p-4 flex justify-between items-center">
+  <div class="flex items-center gap-2">
+    <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="h-8 w-8 rounded-full" />
+    <h1 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
+      E-Loan Admin Panel
+    </h1>
+  </div>
+  <!-- Admin Profile Dropdown -->
+<div class="relative" id="adminProfileDropdown">
+  <button id="adminDropdownToggle" class="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-xl focus:outline-none">
+    <i class="fas fa-user-circle"></i>
+    <i class="fas fa-caret-down text-sm"></i>
+  </button>
+  <div id="adminDropdownMenu" class="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg hidden z-50">
+    <a href="admin-profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+      <i class="fas fa-id-badge mr-2 text-blue-500"></i> Profile
+    </a>
+    <button id="adminLogoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+      <i class="fas fa-sign-out-alt mr-2"></i> Logout
+    </button>
+  </div>
+</div>
+
+</nav>
+
+
+
+  <!-- Main Content -->
+  <main class="p-6 max-w-6xl mx-auto space-y-12">
+    <!-- Admin Menu -->
+<div class="flex gap-4 mb-6">
+  <button onclick="window.open('adminview.html', '_blank')" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">🧭 View Dashboard</button>
+  <button onclick="showSection('addProductSection')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">➕ Add Product</button>
+  <button onclick="showSection('ordersSection')" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">📄 Orders</button>
+</div>
+
+
+<!-- ✅ Combined Add Product + Products Section -->
+<section id="addProductSection" class="bg-white rounded-lg shadow-md p-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">📦 Add New Product</h2>
+  <form id="productForm" class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <input type="text" id="name" placeholder="Product Name" class="w-full border p-3 rounded" required>
+      <input type="number" id="price" placeholder="Price" class="w-full border p-3 rounded" required>
+      <input type="text" id="badge" placeholder="Badge (e.g. New, Hot Deal)" class="w-full border p-3 rounded">
+      <input type="number" id="stock" placeholder="Stock Quantity" class="w-full border p-3 rounded" required>
+      <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg" class="w-full border p-3 rounded" required>
+    </div>
+    <textarea id="description" placeholder="Product Description" class="w-full border p-3 rounded"></textarea>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Choose Category</label>
+        <select id="categorySelect" class="w-full border p-3 rounded">
+          <option value="">-- Select Category --</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Pharmacy">Pharmacy</option>
+          <option value="Cosmetics">Cosmetics</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Or Add New Category</label>
+        <input type="text" id="newCategory" placeholder="e.g. Books, Tools..." class="w-full border p-3 rounded">
+      </div>
+    </div>
+    <div class="flex gap-4 pt-2">
+      <button id="addBtn" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700" type="submit">Add Product</button>
+      <button id="updateBtn" class="hidden bg-yellow-600 text-white px-6 py-2 rounded hover:bg-yellow-700" type="button">Update Product</button>
+      <button id="cancelEditBtn" class="hidden bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600" type="button">Cancel Edit</button>
+    </div>
+    <p id="status" class="mt-4 text-sm font-medium"></p>
+  </form>
+
+  <!-- Divider -->
+  <hr class="my-8 border-t">
+
+  <!-- ✅ Product Search + List -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+    <h2 class="text-2xl font-bold text-gray-800">🗂️ Existing Products</h2>
+    <input type="text" id="searchInput" placeholder="Search by name..." class="w-full md:w-64 border p-3 rounded shadow-sm" />
+  </div>
+
+  <div id="productList" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6"></div>
+
+  <div class="flex justify-center mt-6 gap-4">
+    <button id="prevPage" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">← Prev</button>
+    <button id="nextPage" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next →</button>
+  </div>
+</section>
+
+
+<!-- ✅ Orders Section -->
+<section id="ordersSection" class="bg-white rounded-lg shadow-md p-6 hidden">
+  <h2 class="text-2xl font-bold text-gray-800 mb-4">📄 Order Reports</h2>
+  <div id="ordersList" class="space-y-6 text-sm"></div>
+</section>
+
+
+  </main>
+
+  <!-- JavaScript & Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, getDoc,
+      query, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("productForm");
+    const status = document.getElementById("status");
+    const productList = document.getElementById("productList");
+    const addBtn = document.getElementById("addBtn");
+    const updateBtn = document.getElementById("updateBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const prevPageBtn = document.getElementById("prevPage");
+    const nextPageBtn = document.getElementById("nextPage");
+    const searchInput = document.getElementById("searchInput");
+
+    let editingProductId = null;
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentPage = 0;
+    const pageSize = 5;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return (window.location.href = "login.html");
+      const userSnap = await getDoc(doc(db, "Users", user.uid));
+      if (!userSnap.exists() || userSnap.data().role !== "admin") {
+        window.location.href = "dashboard.html";
+      } else {
+        await fetchProducts();
+        renderProducts();
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
+
+    addBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const product = getFormData();
+      if (!product) return;
+      await addDoc(collection(db, "products"), { ...product, createdAt: new Date() });
+      form.reset();
+      showStatus("✅ Product added successfully!", "green");
+      await fetchProducts();
+      renderProducts();
+    });
+
+    updateBtn.addEventListener("click", async () => {
+      if (!editingProductId) return;
+      const updated = getFormData();
+      if (!updated) return;
+      await updateDoc(doc(db, "products", editingProductId), updated);
+      showStatus("✅ Product updated successfully!", "green");
+      form.reset();
+      switchToAddMode();
+      await fetchProducts();
+      renderProducts();
+    });
+
+    cancelEditBtn.addEventListener("click", () => {
+      form.reset();
+      switchToAddMode();
+      showStatus("✖️ Edit canceled.", "gray");
+    });
+
+    searchInput.addEventListener("input", () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(searchTerm));
+      currentPage = 0;
+      renderProducts();
+    });
+
+    function getFormData() {
+      const name = document.getElementById("name").value.trim();
+      const price = parseFloat(document.getElementById("price").value);
+      const badge = document.getElementById("badge").value.trim() || "New";
+      const image = document.getElementById("imageUrl").value.trim();
+      const stock = parseInt(document.getElementById("stock").value);
+      const description = document.getElementById("description").value.trim();
+      const selectedCategory = document.getElementById("categorySelect").value;
+      const newCategory = document.getElementById("newCategory").value.trim();
+      const category = newCategory || selectedCategory;
+
+      if (!name || isNaN(price) || !image || !category || isNaN(stock)) {
+        showStatus("❌ Please fill all required fields.", "red");
+        return null;
+      }
+      return { name, price, badge, image, stock, description, category };
+    }
+
+    function showStatus(msg, color) {
+      status.textContent = msg;
+      status.className = `text-${color}-600 font-medium mt-2`;
+    }
+
+    function switchToEditMode(id) {
+      editingProductId = id;
+      addBtn.classList.add("hidden");
+      updateBtn.classList.remove("hidden");
+      cancelEditBtn.classList.remove("hidden");
+    }
+
+    function switchToAddMode() {
+      editingProductId = null;
+      addBtn.classList.remove("hidden");
+      updateBtn.classList.add("hidden");
+      cancelEditBtn.classList.add("hidden");
+      status.textContent = "";
+    }
+
+    async function fetchProducts() {
+      const snapshot = await getDocs(query(collection(db, "products"), orderBy("createdAt", "desc")));
+      allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      filteredProducts = [...allProducts];
+    }
+
+    function renderProducts() {
+      productList.innerHTML = "";
+      const start = currentPage * pageSize;
+      const end = start + pageSize;
+      const productsToDisplay = filteredProducts.slice(start, end);
+
+      productsToDisplay.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "bg-white p-4 rounded shadow";
+        div.innerHTML = `
+          <img src="${p.image}" class="h-40 w-full object-cover rounded mb-2" />
+          <h3 class="font-bold">${p.name}</h3>
+          <p class="text-gray-600">$${p.price} • Stock: ${p.stock}</p>
+          <p class="text-sm text-blue-500">${p.badge}</p>
+          <p class="text-sm text-gray-500">${p.category}</p>
+          <p class="text-sm text-gray-700 mt-2">${p.description || ""}</p>
+          <div class="flex space-x-2 mt-3">
+            <button class="bg-yellow-500 text-white px-3 py-1 rounded editBtn" data-id="${p.id}">Edit</button>
+            <button class="bg-red-500 text-white px-3 py-1 rounded deleteBtn" data-id="${p.id}">Delete</button>
+          </div>
+        `;
+        productList.appendChild(div);
+      });
+
+      document.querySelectorAll(".editBtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const p = allProducts.find(prod => prod.id === btn.dataset.id);
+          document.getElementById("name").value = p.name;
+          document.getElementById("price").value = p.price;
+          document.getElementById("badge").value = p.badge;
+          document.getElementById("imageUrl").value = p.image;
+          document.getElementById("stock").value = p.stock;
+          document.getElementById("description").value = p.description || "";
+          document.getElementById("newCategory").value = p.category;
+          document.getElementById("categorySelect").value = "";
+          switchToEditMode(p.id);
+          showStatus("📝 Editing mode.", "yellow");
+        });
+      });
+
+      document.querySelectorAll(".deleteBtn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (confirm("Are you sure?")) {
+            await deleteDoc(doc(db, "products", btn.dataset.id));
+            await fetchProducts();
+            renderProducts();
+          }
+        });
+      });
+    }
+
+    nextPageBtn.addEventListener("click", () => {
+      if ((currentPage + 1) * pageSize < filteredProducts.length) {
+        currentPage++;
+        renderProducts();
+      }
+    });
+
+    prevPageBtn.addEventListener("click", () => {
+      if (currentPage > 0) {
+        currentPage--;
+        renderProducts();
+      }
+    });
+    const ordersList = document.getElementById("ordersList");
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return (window.location.href = "login.html");
+  const userSnap = await getDoc(doc(db, "Users", user.uid));
+  if (!userSnap.exists() || userSnap.data().role !== "admin") {
+    window.location.href = "dashboard.html";
+  } else {
+    await fetchProducts();
+    renderProducts();
+    await loadOrders(); // ✅ Load orders if admin
+  }
+});
+
+async function loadOrders() {
+  try {
+    const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      ordersList.innerHTML = "<p class='text-gray-500'>No orders available.</p>";
+      return;
+    }
+
+    ordersList.innerHTML = ""; // Clear previous list
+
+    snapshot.forEach(docSnap => {
+      const order = docSnap.data();
+      const date = order.createdAt?.toDate().toLocaleString() || "N/A";
+      const div = document.createElement("div");
+      div.className = "bg-gray-50 border border-gray-300 p-4 rounded shadow-sm";
+
+      let items = order.items?.map(item => `
+        <li class="ml-4">• ${item.name} × ${item.quantity} @ $${item.price} = <strong>$${item.subtotal.toFixed(2)}</strong></li>
+      `).join("");
+
+      div.innerHTML = `
+        <p class="text-xs text-gray-500 mb-1">🆔 Order ID: <code>${docSnap.id}</code></p>
+        <p class="text-sm">👤 Name: <span class="text-blue-700">${order.fullName || "Unknown"}</span></p>
+        <p class="text-sm">📍 Address: ${order.address || "N/A"}</p>
+        <p class="text-sm">📅 Date: ${date}</p>
+        <ul class="mt-2">${items}</ul>
+        <p class="mt-2 text-right text-green-700 font-semibold">Total: $${order.total?.toFixed(2)}</p>
+      `;
+
+      ordersList.appendChild(div);
+    });
+  } catch (err) {
+    ordersList.innerHTML = `<p class="text-red-600">❌ Failed to load orders: ${err.message}</p>`;
+  }
+}
+
+
+// ✅ Make showSection accessible from inline onclick=""
+window.showSection = function(sectionId) {
+  const sections = ["addProductSection", "productsSection", "ordersSection"];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle("hidden", id !== sectionId);
+  });
+};
+
+
+  </script>
+
+<script type="module">
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  const toggle = document.getElementById("adminDropdownToggle");
+  const menu = document.getElementById("adminDropdownMenu");
+
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", () => menu.classList.add("hidden"));
+
+  const logoutBtn = document.getElementById("adminLogoutBtn");
+  logoutBtn?.addEventListener("click", async () => {
+    const auth = getAuth();
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+</script>
+
+
+
+</body>
+</html>

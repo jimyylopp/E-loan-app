@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>E-Loan - Smart Shopping & Financing</title>
+  <meta name="description" content="Shop smart and finance smarter with E-Loan's integrated marketplace and credit system">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center">
+          <span class="text-blue-600 text-2xl font-bold flex items-center">
+            <i class="fas fa-hand-holding-usd mr-2"></i> E-Loan
+          </span>
+        </div>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#features" class="text-gray-700 hover:text-blue-600 transition">Features</a>
+          <a href="#how-it-works" class="text-gray-700 hover:text-blue-600 transition">How It Works</a>
+          <a href="#testimonials" class="text-gray-700 hover:text-blue-600 transition">Testimonials</a>
+        </div>
+        <a href="login.html" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition transform hover:scale-105">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="flex-grow flex items-center bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-fade-in">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+          <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+            Smart Shopping <span class="text-blue-600">Meets</span> Smarter Financing
+          </h1>
+          <p class="text-lg text-gray-600">
+            E-Loan revolutionizes your shopping experience by combining an e-commerce marketplace with flexible, Sharia-compliant financing options. Build credit while you shop.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <a href="login.html" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg text-center font-medium transition transform hover:scale-105">
+              Start Shopping <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+            <a href="#how-it-works" class="bg-white hover:bg-gray-100 text-gray-800 px-8 py-3 rounded-lg shadow-lg text-center font-medium border border-gray-200 transition">
+              Learn More
+            </a>
+          </div>
+        </div>
+        <div class="relative">
+          <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1470&q=80" 
+               alt="Phones and computers" 
+               class="rounded-xl shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition duration-500">
+          <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-lg hidden md:block">
+            <div class="flex items-center">
+              <div class="bg-green-100 p-3 rounded-full mr-3">
+                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+              </div>
+              <p class="font-medium">Sharia-compliant financing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose E-Loan?</h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          We use Murabaha financing to help you shop without interest. Buy what you need and pay in fair, fixed installments.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition">
+          <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+            <i class="fas fa-wallet text-blue-600 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Murabaha Model</h3>
+          <p class="text-gray-600">
+            You buy a product through us with no hidden interest. We disclose the cost and profit upfront—completely transparent and Sharia-compliant.
+          </p>
+        </div>
+
+        <div class="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition">
+          <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+            <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Build Credit</h3>
+          <p class="text-gray-600">
+            Make timely installment payments and build your creditworthiness. Perfect for users with no access to traditional credit systems.
+          </p>
+        </div>
+
+        <div class="bg-gray-50 p-8 rounded-xl hover:shadow-lg transition">
+          <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+            <i class="fas fa-store text-yellow-600 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">All-in-One Marketplace</h3>
+          <p class="text-gray-600">
+            Browse phones, computers, cosmetics, and more—all eligible for installment-based Murabaha financing at checkout.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">How E-Loan Works</h2>
+        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+          Simple, ethical, and easy — here’s how you shop with E-Loan using Murabaha financing
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
+          <h3 class="font-bold mb-2">Sign Up</h3>
+          <p class="text-gray-600 text-sm">Create your secure account in minutes</p>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
+          <h3 class="font-bold mb-2">Browse Products</h3>
+          <p class="text-gray-600 text-sm">Explore electronics, pharmacy, and more</p>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
+          <h3 class="font-bold mb-2">Choose Installments</h3>
+          <p class="text-gray-600 text-sm">Select your Murabaha plan—fair and fixed</p>
+        </div>
+
+        <div class="text-center">
+          <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">4</div>
+          <h3 class="font-bold mb-2">Pay Over Time</h3>
+          <p class="text-gray-600 text-sm">Enjoy your item now, pay later with no interest</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold mb-6">What Our Customers Say</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition">
+          <p class="italic text-gray-600">“E-Loan helped me buy the phone I needed for work and pay in easy steps.”</p>
+          <p class="mt-4 font-semibold text-blue-600">– Ahmed M.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition">
+          <p class="italic text-gray-600">“It’s like shopping with a built-in credit system. Love the simplicity!”</p>
+          <p class="mt-4 font-semibold text-blue-600">– Ayaan A.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition">
+          <p class="italic text-gray-600">“Finally a platform that lets me buy electronics and manage money smart.”</p>
+          <p class="mt-4 font-semibold text-blue-600">– Hafsa K.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white text-center p-4 text-sm text-gray-500">
+    &copy; 2025 E-Loan. All rights reserved.
+  </footer>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 1s ease-out forwards;
+    }
+  </style>
+</body>
+</html>

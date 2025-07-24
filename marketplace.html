@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Loan Marketplace</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="h-10 w-10" />
+      <h1 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
+      E-Loan Suuq
+      </h1>
+    </div>
+
+    <!-- Back Button -->
+    <a href="cart.html" class="relative">
+      <span class="text-xl">🛒</span>
+      <span id="cart-count" class="absolute top-[-10px] right-[-10px] text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">0</span>
+    </a>
+  </nav>
+
+  <!-- Category View -->
+  <div id="categoryView" class="flex flex-wrap justify-center items-center gap-8 py-16">
+    <button class="category-btn flex flex-col items-center w-56 h-56 bg-white rounded-full shadow-xl hover:bg-green-50 transition transform hover:scale-110" data-category="Electronics">
+      <img src="https://img.icons8.com/fluency/96/motherboard.png" class="w-24 h-24 mt-4" alt="Electronics"/>
+      <span class="text-xl font-bold text-gray-800 mt-2">Electronics</span>
+    </button>
+
+    <button class="category-btn flex flex-col items-center w-56 h-56 bg-white rounded-full shadow-xl hover:bg-green-50 transition transform hover:scale-110" data-category="Pharmacy">
+      <img src="https://img.icons8.com/color/96/pill.png" class="w-24 h-24 mt-4" alt="Pharmacy"/>
+      <span class="text-xl font-bold text-gray-800 mt-2">Pharmacy</span>
+    </button>
+
+    <button class="category-btn flex flex-col items-center w-56 h-56 bg-white rounded-full shadow-xl hover:bg-green-50 transition transform hover:scale-110" data-category="Cosmetics">
+      <img src="https://img.icons8.com/fluency/96/lipstick.png" class="w-24 h-24 mt-4" alt="Cosmetics"/>
+      <span class="text-xl font-bold text-gray-800 mt-2">Cosmetics</span>
+    </button>
+  </div>
+
+  <!-- Back to Dashboard -->
+  <div class="flex justify-center mt-10 mb-16">
+    <button id="backToDashboardBtn" class="px-5 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow">
+      ← Back to dashboard
+    </button>
+  </div>
+
+  <!-- Product Display -->
+  <div id="products-container" class="flex flex-wrap justify-center gap-6 mt-10 px-6 pb-16"></div>
+
+  <!-- Back to Categories -->
+  <div class="flex justify-center mt-10 mb-16">
+    <button id="back-to-categories" class="hidden px-5 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow">
+      ← Back to Categories
+    </button>
+  </div>
+
+  <!-- JS Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const categoryButtons = document.querySelectorAll(".category-btn");
+    const categoryView = document.getElementById("categoryView");
+    const productsContainer = document.getElementById("products-container");
+    const backButton = document.getElementById("back-to-categories");
+    const cartCount = document.getElementById("cart-count");
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+      cartCount.textContent = totalItems;
+    }
+
+    async function loadProducts(category) {
+      productsContainer.innerHTML = "";
+      const q = query(collection(db, "products"), where("category", "==", category));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        productsContainer.innerHTML = `<p class="text-gray-500 text-center w-full">No products found for ${category}.</p>`;
+      }
+
+      querySnapshot.forEach((doc) => {
+        const product = doc.data();
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-lg shadow-md p-4 w-72";
+
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" class="w-full h-[250px] object-cover rounded-md mb-3" />
+          <h2 class="text-lg font-semibold">${product.name}</h2>
+          <p class="text-gray-600">$${product.price}</p>
+          <button class="bg-blue-600 text-white mt-2 px-4 py-1 rounded add-to-cart" data-id="${doc.id}">
+            Add to Cart
+          </button>
+        `;
+
+        productsContainer.appendChild(card);
+      });
+
+      categoryView.classList.add("hidden");
+      backButton.classList.remove("hidden");
+    }
+
+    categoryButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const category = btn.getAttribute("data-category");
+        loadProducts(category);
+      });
+    });
+
+    backButton.addEventListener("click", () => {
+      categoryView.classList.remove("hidden");
+      productsContainer.innerHTML = "";
+      backButton.classList.add("hidden");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("add-to-cart")) {
+        const id = e.target.getAttribute("data-id");
+        let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          cart.push({ id: id, quantity: 1 });
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+      }
+    });
+
+    updateCartCount();
+  </script>
+
+  <!-- View Only Mode -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewOnly = urlParams.get('viewOnly') === 'true';
+
+    if (viewOnly) {
+      const cartLink = document.querySelector('a[href="cart.html"]');
+      if (cartLink) cartLink.style.display = "none";
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+          btn.disabled = true;
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+          btn.textContent = 'View Only';
+          btn.removeEventListener('click', btn.onclick);
+        });
+      });
+    }
+  </script>
+
+  <!-- Back to Dashboard -->
+  <script>
+    document.getElementById("backToDashboardBtn").addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+  </script>
+
+</body>
+</html>

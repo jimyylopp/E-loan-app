@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopping Cart - E-Loan</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <style>
+    .logout-btn {
+      background-image: linear-gradient(to right, #ef4444, #dc2626);
+      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3), 0 2px 4px -1px rgba(239, 68, 68, 0.1);
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-image: linear-gradient(to right, #dc2626, #b91c1c);
+      box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.1);
+      transform: translateY(-1px);
+    }
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
+    <div class="flex items-center gap-3">
+      <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="h-10 w-10" />
+      <h1 class="text-2xl font-bold text-orange-600">E-Loan Cart </h1>
+    </div>
+    <button id="logoutBtn" class="logout-btn text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6 max-w-3xl mx-auto">
+    <div class="bg-white shadow rounded-lg p-6">
+      <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Your Cart Items</h2>
+      <ul id="cart-items" class="space-y-4"></ul>
+
+      <div class="mt-6 border-t pt-4">
+        <p class="text-xl font-bold text-right">Total: <span id="cart-total" class="text-green-600">$0.00</span></p>
+
+        <form id="deliveryForm" class="mt-4 space-y-4">
+          <input type="text" id="fullName" placeholder="Full Name" class="w-full border p-3 rounded" required />
+          <textarea id="address" placeholder="Delivery Address" rows="3" class="w-full border p-3 rounded resize-none" required></textarea>
+
+          <div class="text-right">
+            <button type="submit" class="mt-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition">Place Order</button>
+          </div>
+          <p id="deliveryStatus" class="text-sm font-medium mt-2"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="flex justify-center mt-10 mb-16">
+      <button id="back-to-categories" class="px-5 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow">
+        ← Continue Shopping
+      </button>
+    </div>
+  </main>
+
+  <!-- Firebase Auth & Firestore -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.href = "login.html";
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
+
+    const deliveryForm = document.getElementById("deliveryForm");
+    const deliveryStatus = document.getElementById("deliveryStatus");
+
+    deliveryForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const fullName = document.getElementById("fullName").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      if (!fullName || !address) {
+        deliveryStatus.textContent = "❌ Please fill all required fields.";
+        deliveryStatus.className = "text-red-600 font-medium mt-2";
+        return;
+      }
+
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (!cart.length) {
+        deliveryStatus.textContent = "❌ Cart is empty.";
+        deliveryStatus.className = "text-red-600 font-medium mt-2";
+        return;
+      }
+
+      try {
+        const user = auth.currentUser;
+        if (!user) throw new Error("Not logged in");
+
+        let items = [];
+        let total = 0;
+
+        for (let i = 0; i < cart.length; i++) {
+          const { id, quantity } = cart[i];
+          const docSnap = await getDoc(doc(db, "products", id));
+          if (!docSnap.exists()) continue;
+
+          const product = docSnap.data();
+          const subtotal = parseFloat(product.price) * quantity;
+          total += subtotal;
+
+          items.push({
+            id,
+            name: product.name,
+            price: parseFloat(product.price),
+            quantity,
+            subtotal
+          });
+        }
+
+        await addDoc(collection(db, "orders"), {
+          userId: user.uid,
+          fullName,
+          address,
+          items,
+          total,
+          createdAt: serverTimestamp()
+        });
+
+        // ✅ Add credit points safely using setDoc with merge
+        const userRef = doc(db, "Users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const prevPoints = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+        const earned = Math.floor(total);
+        await setDoc(userRef, {
+          points: prevPoints + earned
+        }, { merge: true });
+
+        localStorage.removeItem("cart");
+        deliveryStatus.textContent = `✅ Order placed! You earned ${earned} points.`;
+        deliveryStatus.className = "text-green-600 font-medium mt-2";
+
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+
+      } catch (err) {
+        console.error("Order error:", err);
+        deliveryStatus.textContent = "❌ Failed to place order.";
+        deliveryStatus.className = "text-red-600 font-medium mt-2";
+      }
+    });
+
+    document.getElementById("back-to-categories").addEventListener("click", () => {
+      window.location.href = "marketplace.html";
+    });
+
+    const list = document.getElementById("cart-items");
+    const totalEl = document.getElementById("cart-total");
+
+    async function renderCart() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      list.innerHTML = "";
+      let total = 0;
+
+      for (let i = 0; i < cart.length; i++) {
+        const { id, quantity } = cart[i];
+        if (!id || !quantity) continue;
+
+        try {
+          const docRef = doc(db, "products", id);
+          const docSnap = await getDoc(docRef);
+          if (!docSnap.exists()) continue;
+
+          const product = docSnap.data();
+          const price = parseFloat(product.price) || 0;
+          const sub = price * quantity;
+          total += sub;
+
+          const li = document.createElement("li");
+          li.className = "flex justify-between items-center bg-gray-50 p-4 rounded border";
+
+          li.innerHTML = `
+            <div>
+              <p class="font-medium text-lg">${product.name}</p>
+              <p class="text-sm text-gray-500">
+                Quantity: <span class="font-semibold">x${quantity}</span>
+                <button class="ml-2 text-blue-600 hover:underline" onclick="updateQty(${i}, 1)">+</button>
+                <button class="text-blue-600 hover:underline" onclick="updateQty(${i}, -1)">-</button>
+                <button class="ml-2 text-red-500 hover:underline" onclick="removeItem(${i})">Remove</button>
+              </p>
+            </div>
+            <span class="text-lg font-semibold text-gray-700">$${sub.toFixed(2)}</span>
+          `;
+
+          list.appendChild(li);
+        } catch (err) {
+          console.error("Error loading product:", err);
+        }
+      }
+
+      totalEl.textContent = `$${total.toFixed(2)}`;
+    }
+
+    window.updateQty = (index, change) => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart[index].quantity += change;
+      if (cart[index].quantity <= 0) cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    };
+
+    window.removeItem = (index) => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    };
+
+    renderCart();
+  </script>
+</body>
+</html>

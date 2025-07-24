@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Credit Dashboard - E-Loan</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
+    <div class="flex items-center gap-3">
+      <img src="assets/eloan-logo.png" alt="E-Loan Logo" class="h-10 w-10" />
+      <h1 class="text-2xl font-bold text-blue-700 flex items-center gap-2">
+      E-Loan Credit
+      </h1>
+    </div>
+    <button id="logoutBtn" class="bg-red-500 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-red-600">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6 max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-semibold mb-4 border-b pb-2 flex items-center gap-2">
+        <i class="fas fa-chart-line text-blue-600"></i> Your Credit Overview
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <!-- Credit Points Card -->
+        <div class="bg-blue-50 border-l-4 border-blue-600 p-5 rounded-lg shadow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-600 text-sm">Total Credit Points</p>
+              <p id="creditPoints" class="text-3xl font-bold text-blue-700">Loading...</p>
+              <p class="text-sm text-gray-500 mt-1">Earn more by shopping through E-Loan</p>
+            </div>
+            <i class="fas fa-star text-yellow-400 text-3xl"></i>
+          </div>
+        </div>
+
+        <!-- Optional Future Section -->
+        <div class="bg-green-50 border-l-4 border-green-500 p-5 rounded-lg shadow flex items-center justify-center">
+          <p class="text-green-700 font-medium text-center">Use your credit points to request a Murabaha loan soon!</p>
+        </div>
+      </div>
+    </div>
+    <!-- Back to Dashboard -->
+  <div class="flex justify-center mt-10 mb-16">
+    <button id="backToDashboardBtn" class="px-5 py-3 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow">
+      ← Back to dashboard
+    </button>
+  </div>
+  </main>
+
+  <!-- Firebase Auth & Firestore -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvxjPaPFhOQvhEdV5BnZ0hSn93lMDDrbI",
+      authDomain: "murabahabankingsystem.firebaseapp.com",
+      projectId: "murabahabankingsystem",
+      storageBucket: "murabahabankingsystem.appspot.com",
+      messagingSenderId: "1031570889581",
+      appId: "1:1031570889581:web:16e1fd2a7e1687ac71d864"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const creditPointsEl = document.getElementById("creditPoints");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+      });
+
+      try {
+        const userRef = doc(db, "Users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const points = userSnap.exists() ? (userSnap.data().points || 0) : 0;
+        creditPointsEl.textContent = `${points} points`;
+      } catch (err) {
+        console.error("Failed to load points", err);
+        creditPointsEl.textContent = "Error loading points";
+      }
+    });
+  </script>
+  <script>
+    document.getElementById("backToDashboardBtn").addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+  </script>
+</body>
+</html>
